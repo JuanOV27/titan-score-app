@@ -66,16 +66,21 @@ async function cargarReleases() {
     }
 
     notesContainer.innerHTML = releases
-      .map(
-        (r) => `
+      .map((r) => {
+        const apk = r.assets.find((a) => a.name.endsWith(".apk"));
+        const descarga = apk
+          ? `<a class="release-download" href="${apk.browser_download_url}" target="_blank" rel="noopener">⬇ Descargar ${escapeHtml(r.tag_name)}</a>`
+          : "";
+        return `
         <div class="release">
           <div class="release-header">
             <span class="release-version">${escapeHtml(r.name || r.tag_name)}</span>
             <span class="release-date">${formatDate(r.published_at)}</span>
           </div>
           <div class="release-body">${renderNotes(r.body) || "<p>Sin notas.</p>"}</div>
-        </div>`
-      )
+          ${descarga}
+        </div>`;
+      })
       .join("");
   } catch (err) {
     notesContainer.innerHTML = '<p class="error">No se pudieron cargar las versiones. Revisa las <a href="https://github.com/' + REPO + '/releases" target="_blank" rel="noopener">releases en GitHub</a>.</p>';
