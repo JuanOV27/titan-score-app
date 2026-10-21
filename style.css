@@ -1,45 +1,73 @@
+/* Identidad de Titan Beta: el mismo violeta neón que la app (src/debug/res/values/colors.xml)
+   sobre el fondo oscuro de la app. */
 :root {
-  --orange: #FF6B35;
-  --orange-dark: #E8571F;
-  --orange-light: #FFEDE5;
-  --text: #2B211C;
-  --text-muted: #6B6259;
-  --bg: #FFFBFA;
-  --card: #FFFFFF;
-  --border: #F0E4DE;
+  --violeta: #A855F7;
+  --violeta-hondo: #7C3AED;
+  --lavanda: #D8B4FE;
+  --contenedor: #EBDCFF;
+  --sobre-contenedor: #1E0A33;
+  --fondo: #141218;
+  --tarjeta: #1D1B22;
+  --borde: #2E2B36;
+  --texto: #ECE6F0;
+  --texto-tenue: #A9A2B4;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  background: var(--fondo);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
+  background: var(--fondo);
+  color: var(--texto);
+  line-height: 1.55;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 .container {
-  max-width: 920px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 16px;
 }
 
+.acento {
+  color: var(--violeta);
+}
+
+/* ---- Hero ---------------------------------------------------------------- */
+
 .hero {
-  background: linear-gradient(160deg, var(--orange) 0%, var(--orange-dark) 100%);
-  color: #fff;
-  text-align: center;
-  padding: 64px 0 56px;
+  background:
+    radial-gradient(ellipse at 75% 30%, rgba(168, 85, 247, 0.28), transparent 60%),
+    radial-gradient(ellipse at 10% 90%, rgba(124, 58, 237, 0.22), transparent 55%),
+    var(--fondo);
+  padding: 56px 0 48px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .brand-mark {
@@ -49,154 +77,338 @@ body {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(140deg, var(--violeta), var(--violeta-hondo));
+  color: #fff;
   font-weight: 800;
-  font-size: 20px;
-  letter-spacing: 0.5px;
+  font-size: 19px;
+  box-shadow: 0 0 24px rgba(168, 85, 247, 0.45);
 }
 
 .brand-name {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 800;
-  letter-spacing: -0.5px;
+  letter-spacing: 0.3px;
 }
 
 .tagline {
-  font-size: 17px;
-  opacity: 0.92;
-  margin: 8px 0 28px;
+  font-size: 19px;
+  color: var(--texto);
+  margin: 0 0 28px;
+  max-width: 34em;
 }
 
 .btn-download {
-  display: inline-block;
-  background: #fff;
-  color: var(--orange-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--violeta);
+  color: #fff;
   font-weight: 700;
-  font-size: 17px;
-  padding: 14px 28px;
+  font-size: 18px;
+  padding: 15px 30px;
   border-radius: 999px;
   text-decoration: none;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.15s ease;
+  box-shadow: 0 0 0 1px rgba(216, 180, 254, 0.35), 0 10px 30px rgba(168, 85, 247, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
-.btn-download:hover {
+.btn-download:hover,
+.btn-download:focus-visible {
+  background: var(--violeta-hondo);
   transform: translateY(-2px);
+  box-shadow: 0 0 0 1px var(--lavanda), 0 14px 36px rgba(168, 85, 247, 0.55);
 }
 
-.hint {
-  margin-top: 14px;
-  font-size: 13px;
+.btn-download:focus-visible {
+  outline: 3px solid var(--lavanda);
+  outline-offset: 3px;
+}
+
+#download-version {
+  font-weight: 500;
   opacity: 0.85;
 }
 
-main {
-  padding: 56px 24px 24px;
+.hint {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--texto-tenue);
+  max-width: 34em;
 }
 
-section.features,
-section.notas {
-  margin-bottom: 56px;
+.telefono {
+  margin: 0;
+  justify-self: center;
+  width: 100%;
+  max-width: 300px;
+  border-radius: 34px;
+  padding: 10px;
+  background: #0B0A0E;
+  border: 1px solid var(--borde);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 60px rgba(168, 85, 247, 0.18);
+}
+
+.telefono img {
+  border-radius: 26px;
+}
+
+.telefono.pequeno {
+  max-width: 260px;
+}
+
+/* ---- Secciones destacadas ----------------------------------------------- */
+
+main {
+  padding-top: 24px;
+}
+
+section {
+  padding: 48px 0 8px;
 }
 
 h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
-  border-left: 4px solid var(--orange);
-  padding-left: 12px;
+  font-size: 28px;
+  margin: 6px 0 14px;
 }
+
+.etiqueta {
+  display: inline-block;
+  background: var(--contenedor);
+  color: var(--sobre-contenedor);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.lead {
+  color: var(--texto-tenue);
+  font-size: 17px;
+  max-width: 46em;
+}
+
+.par-mapa {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+  max-width: 760px;
+}
+
+.par-mapa figure {
+  margin: 0;
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.par-mapa figcaption {
+  text-align: center;
+  padding: 10px;
+  color: var(--texto-tenue);
+  font-size: 14px;
+  border-top: 1px solid var(--borde);
+}
+
+.destacado.invertido {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.lista {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.lista li {
+  margin-bottom: 12px;
+  color: var(--texto-tenue);
+}
+
+.lista strong {
+  color: var(--texto);
+}
+
+/* ---- Funciones ------------------------------------------------------------ */
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+  margin-top: 8px;
 }
 
 .feature {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px 20px;
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  padding: 20px;
+  transition: border-color 0.15s ease;
+}
+
+.feature:hover {
+  border-color: rgba(168, 85, 247, 0.55);
 }
 
 .feature h3 {
-  margin: 0 0 6px;
-  font-size: 16px;
-  color: var(--orange-dark);
+  margin: 0 0 8px;
+  font-size: 17px;
+  color: var(--lavanda);
 }
 
 .feature p {
   margin: 0;
+  color: var(--texto-tenue);
+  font-size: 15px;
+}
+
+/* ---- Novedades ------------------------------------------------------------ */
+
+.nota-descarga {
+  color: var(--texto-tenue);
   font-size: 14px;
-  color: var(--text-muted);
+  margin-top: -6px;
 }
 
 .release {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  background: var(--tarjeta);
+  border: 1px solid var(--borde);
+  border-radius: 18px;
   padding: 20px 22px;
   margin-bottom: 14px;
 }
 
+.release.actual {
+  border-color: rgba(168, 85, 247, 0.6);
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.12);
+}
+
 .release-header {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
   flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
   margin-bottom: 8px;
 }
 
 .release-version {
-  font-weight: 800;
+  font-weight: 700;
   font-size: 17px;
-  color: var(--orange-dark);
 }
 
 .release-date {
-  font-size: 13px;
-  color: var(--text-muted);
+  color: var(--texto-tenue);
+  font-size: 14px;
 }
 
 .release-body {
-  font-size: 14px;
-  white-space: pre-line;
+  color: var(--texto-tenue);
+  font-size: 15px;
+}
+
+.release-body strong {
+  color: var(--texto);
 }
 
 .release-body ul {
-  margin: 6px 0;
   padding-left: 20px;
 }
 
 .release-download {
   display: inline-block;
-  margin-top: 12px;
-  font-size: 13px;
+  margin-top: 6px;
   font-weight: 700;
-  color: var(--orange-dark);
+  color: var(--lavanda);
   text-decoration: none;
-  border: 1px solid var(--orange);
-  border-radius: 999px;
-  padding: 6px 14px;
 }
 
 .release-download:hover {
-  background: var(--orange-light);
+  text-decoration: underline;
+}
+
+details.release summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+details.release summary::-webkit-details-marker {
+  display: none;
+}
+
+details.release summary .release-header {
+  margin-bottom: 0;
+}
+
+details.release[open] summary .release-header {
+  margin-bottom: 8px;
 }
 
 .loading,
 .error {
-  color: var(--text-muted);
-  font-size: 14px;
+  color: var(--texto-tenue);
+}
+
+.error a {
+  color: var(--lavanda);
 }
 
 footer {
-  border-top: 1px solid var(--border);
-  padding: 24px 0 40px;
+  margin-top: 56px;
+  padding: 28px 0 40px;
+  border-top: 1px solid var(--borde);
+  color: var(--texto-tenue);
+  font-size: 14px;
 }
 
-footer p {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  text-align: center;
+/* ---- Teléfono ------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .hero {
+    padding: 40px 0 36px;
+  }
+
+  .hero-grid,
+  .destacado.invertido {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .brand-name {
+    font-size: 28px;
+  }
+
+  .tagline {
+    font-size: 17px;
+  }
+
+  .btn-download {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .telefono {
+    max-width: 240px;
+  }
+
+  .destacado.invertido .telefono {
+    order: 2;
+  }
+
+  .par-mapa {
+    gap: 10px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }

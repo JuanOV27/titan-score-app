@@ -3,72 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Titan Score — App de entrenamiento</title>
-<meta name="description" content="Titan Score: registra tus entrenamientos y mira cómo cambia tu cuerpo en un avatar 3D construido con tus propias medidas. Descarga el APK más reciente.">
+<title>Titan Beta — Titan Score</title>
+<meta name="description" content="Titan Beta: registra tus entrenamientos y mírate cambiar en un avatar 3D construido con tus medidas, con mapa muscular, cardio con GPS y aviso de salida del gym. Descarga el APK.">
+<meta name="theme-color" content="#141218">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="hero">
-  <div class="container">
-    <div class="brand">
-      <span class="brand-mark">TS</span>
-      <span class="brand-name">Titan Score</span>
+  <div class="container hero-grid">
+    <div class="hero-text">
+      <div class="brand">
+        <span class="brand-mark">TS</span>
+        <span class="brand-name">Titan <span class="acento">Beta</span></span>
+      </div>
+      <p class="tagline">Registra tu entrenamiento y mírate cambiar: tu avatar 3D se construye con tus medidas reales, y ahora también te enseña qué músculos trabajaste.</p>
+      <a id="download-link" class="btn-download" href="https://github.com/JuanOV27/titan-score-app/releases/latest" target="_blank" rel="noopener">
+        Descargar APK <span id="download-version"></span>
+      </a>
+      <p class="hint">Android 8.0 o superior. Activa "instalar apps de orígenes desconocidos" para instalarla. Titan Beta es una app aparte: se instala junto a Titan Score y tu cuenta trae todos tus datos.</p>
     </div>
-    <p class="tagline">Registra tu entrenamiento y mírate cambiar: tu avatar 3D se construye con tus medidas reales.</p>
-    <a id="download-link" class="btn-download" href="#" target="_blank" rel="noopener">
-      ⬇ Descargar APK <span id="download-version"></span>
-    </a>
-    <p class="hint">Android 8.0 o superior. Necesitarás habilitar "orígenes desconocidos" para instalar.</p>
+    <figure class="telefono">
+      <img src="img/personalizar-cabello.webp" width="360" height="678" alt="Pantalla de personalización del avatar en la sección Cabello, con miniaturas de cada peinado y la paleta de colores">
+    </figure>
   </div>
 </header>
 
 <main class="container">
 
+  <section class="destacado">
+    <span class="etiqueta">Nuevo en 1.1.0</span>
+    <h2>Tus músculos, sobre tu propio cuerpo</h2>
+    <p class="lead">La gráfica circular de Distribución muscular deja paso a tu avatar. Cada grupo se pinta de su color, más vivo cuanto más lo entrenaste, y lo que no tocaste se queda en gris. Gíralo para ver la espalda; los porcentajes van debajo. También aparece en el resumen de cada sesión.</p>
+    <div class="par-mapa">
+      <figure>
+        <img src="img/mapa-frente.webp" width="400" height="486" alt="Mapa muscular de frente: pectorales, hombros, bíceps, abdomen y cuádriceps coloreados">
+        <figcaption>Frente</figcaption>
+      </figure>
+      <figure>
+        <img src="img/mapa-espalda.webp" width="400" height="486" alt="Mapa muscular de espalda: trapecios, dorsales, glúteos, isquiotibiales y pantorrillas coloreados">
+        <figcaption>Espalda</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="destacado invertido">
+    <figure class="telefono pequeno">
+      <img src="img/personalizar-ropa.webp" width="360" height="678" alt="Sección Camisa de la personalización: camiseta, camisilla, top y manga larga, con cinco colores">
+    </figure>
+    <div>
+      <span class="etiqueta">Nuevo en 1.1.0</span>
+      <h2>Tu avatar, a tu estilo</h2>
+      <ul class="lista">
+        <li><strong>Cabello:</strong> buzz cut, mullet y hongo, además del clásico de cada cuerpo, en siete colores.</li>
+        <li><strong>Ropa:</strong> camisa de manga larga, leggings y shorts. Cada prenda en blanco, negro, gris, naranja o morado, sin perder costuras ni bajos.</li>
+        <li><strong>Rostro vivo:</strong> parpadea, se alegra el día que entrenas y se cansa tras una sesión larga.</li>
+        <li><strong>Más espacio para el avatar:</strong> panel compacto y una miniatura en cada opción.</li>
+      </ul>
+    </div>
+  </section>
+
   <section class="features">
-    <h2>Qué hace</h2>
+    <h2>Todo lo que hace</h2>
     <div class="feature-grid">
       <div class="feature">
         <h3>Avatar 3D con tu forma</h3>
-        <p>El cuerpo se construye con tus medidas reales. Cuello, pecho, cintura, cadera, brazos, muslos y pantorrillas mueven cada zona por separado, y el reparto entre grasa y músculo sale de tu porcentaje graso, no del peso.</p>
+        <p>El cuerpo sale de tus medidas reales: cuello, pecho, cintura, cadera, brazos, muslos y pantorrillas mueven cada zona por separado, y el reparto entre grasa y músculo sale de tu porcentaje graso.</p>
       </div>
       <div class="feature">
         <h3>Forma de cuerpo</h3>
-        <p>Seis siluetas que ensanchan o estrechan hombros, caja torácica y pelvis. Es el ancho del hueso, no la grasa: cambiar de silueta no engorda al avatar. Cuerpo masculino y femenino, cada uno con su propio esqueleto.</p>
+        <p>Seis siluetas que ensanchan o estrechan hombros, tórax y pelvis. Es el ancho del hueso, no la grasa. Cuerpo masculino y femenino, cada uno con su esqueleto.</p>
+      </div>
+      <div class="feature">
+        <h3>Mapa muscular</h3>
+        <p>Qué trabajaste en la semana, el mes o desde siempre, pintado sobre tu cuerpo en 15 grupos musculares, de frente y de espalda.</p>
       </div>
       <div class="feature">
         <h3>Rutinas y sesión guiada</h3>
-        <p>Crea rutinas con series, repeticiones y peso objetivo. En la sesión cada serie se pre-llena con tu objetivo; confirmas con un toque o ajustas si hiciste más o menos.</p>
+        <p>Rutinas con series, repeticiones y peso objetivo, sobre un catálogo de 268 ejercicios. En la sesión cada serie llega pre-llenada; confirmas con un toque o ajustas.</p>
       </div>
       <div class="feature">
         <h3>Progresión automática</h3>
-        <p>El motor compara la fuerza estimada de cada sesión con las anteriores y propone cuándo subir peso. Cuatro estrategias: lineal, doble progresión, Greyskull o ninguna.</p>
+        <p>Compara la fuerza estimada de cada sesión con las anteriores y te propone cuándo subir peso: lineal, doble progresión, Greyskull o ninguna.</p>
       </div>
       <div class="feature">
         <h3>Cardio con GPS</h3>
-        <p>Modo trote con podómetro y mapa en vivo. Al terminar, el resumen con la ruta dibujada sobre OpenStreetMap.</p>
+        <p>Modo trote con podómetro y mapa en vivo, y la ruta dibujada al terminar. Mapas con MapLibre y OpenFreeMap, con respaldo cuando no hay conexión.</p>
+      </div>
+      <div class="feature">
+        <h3>Aviso de salida del gym</h3>
+        <p>Marca tu gimnasio en el mapa. Si te vas con la sesión abierta, la app te avisa y la cierra con tu hora de salida real.</p>
       </div>
       <div class="feature">
         <h3>Metas</h3>
-        <p>Objetivos de peso corporal, de medidas o de fuerza en un ejercicio, con un plan sugerido para llegar y aviso cuando estás cerca.</p>
-      </div>
-      <div class="feature">
-        <h3>Tu cuenta en la nube</h3>
-        <p>Rutinas, sesiones, cardio, metas, medidas y avatar viajan contigo. Entra desde otro teléfono y está todo. Verificación por correo.</p>
-      </div>
-      <div class="feature">
-        <h3>Perfiles y búsqueda</h3>
-        <p>Busca a otras personas y mira su avatar, su racha y las marcas que hayan elegido enseñar. Las medidas corporales no salen del teléfono de su dueño.</p>
+        <p>Objetivos de peso, de medidas o de fuerza en un ejercicio, con un plan sugerido para llegar y aviso cuando estás cerca.</p>
       </div>
       <div class="feature">
         <h3>Estadísticas</h3>
-        <p>Gráficas de volumen, cumplimiento y frecuencia semanal, más el análisis de tu físico: índice cintura-cadera, cintura-altura y porcentaje graso.</p>
+        <p>Duración, cumplimiento y frecuencia semanal, más el análisis de tu físico: cintura-cadera, cintura-altura y porcentaje graso.</p>
+      </div>
+      <div class="feature">
+        <h3>Tu cuenta en la nube</h3>
+        <p>Rutinas, sesiones, cardio, metas, medidas y avatar viajan contigo. Entra desde otro teléfono y está todo.</p>
+      </div>
+      <div class="feature">
+        <h3>Perfiles y búsqueda</h3>
+        <p>Busca a otras personas y mira su avatar, su racha y las marcas que eligieron enseñar. Tus medidas no salen de tu teléfono.</p>
+      </div>
+      <div class="feature">
+        <h3>Tus datos, con permiso</h3>
+        <p>Al crear la cuenta cada consentimiento se pide por separado, conforme a la ley de protección de datos personales.</p>
       </div>
     </div>
   </section>
 
   <section class="notas">
     <h2>Novedades</h2>
+    <p class="nota-descarga">Solo se distribuye la versión más reciente. Las anteriores quedan aquí como historial.</p>
     <div id="release-notes">
       <p class="loading">Cargando versiones…</p>
     </div>
@@ -78,7 +129,7 @@
 
 <footer>
   <div class="container">
-    <p>Titan Score — proyecto en desarrollo. El código de la app es privado; esta página solo distribuye builds y notas de versión.</p>
+    <p>Titan Beta — la versión en pruebas de Titan Score. El código de la app es privado; esta página solo distribuye el APK y las notas de versión.</p>
   </div>
 </footer>
 
