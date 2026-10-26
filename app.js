@@ -1,5 +1,9 @@
 const REPO = "JuanOV27/titan-score-app";
 
+// Enlace permanente a la última versión. No pasa por la API, así que sigue funcionando cuando
+// GitHub la limita (60 consultas por hora por conexión: en un wifi compartido se agotan rápido).
+const APK_ULTIMA = `https://github.com/${REPO}/releases/latest/download/titan-score.apk`;
+
 function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text;
@@ -88,7 +92,12 @@ async function cargarReleases() {
 
     notesContainer.innerHTML = actual + historial;
   } catch (err) {
-    notesContainer.innerHTML = '<p class="error">No se pudieron cargar las versiones. Revisa las <a href="https://github.com/' + REPO + '/releases" target="_blank" rel="noopener">releases en GitHub</a>.</p>';
+    // El botón de arriba ya apunta a APK_ULTIMA desde el HTML; aquí se ofrece también junto
+    // al aviso, para que nadie se quede sin descarga.
+    notesContainer.innerHTML = `
+      <p class="error">No se pudieron cargar las notas de versión, pero puedes descargar la app igual.</p>
+      <a class="release-download" href="${APK_ULTIMA}" rel="noopener">Descargar la última versión</a>
+      <p class="error">Historial completo en las <a href="https://github.com/${REPO}/releases" target="_blank" rel="noopener">releases de GitHub</a>.</p>`;
   }
 }
 
