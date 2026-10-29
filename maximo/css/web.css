@@ -5,7 +5,7 @@
   --borde: rgba(255, 255, 255, 0.1);
   --texto: #f4f4f5;
   --tenue: #a1a1aa;
-  --acento: #ff6b35;
+  --acento: #8b5cf6;
   --xp: #ffb800;
 }
 
@@ -99,7 +99,7 @@ html, body {
   border: 0;
   border-radius: 12px;
   background: var(--acento);
-  color: #111;
+  color: #fff;
   font: inherit;
   font-weight: 700;
   cursor: pointer;

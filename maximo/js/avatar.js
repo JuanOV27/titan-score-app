@@ -148,14 +148,18 @@ export class Avatar {
         return;
       }
 
+      const colorRopa = esRopa && this.ropa
+        ? (/^Mat_Pants/.test(material.name) ? this.ropa.pantalon : this.ropa.camisa)
+        : undefined;
+
       if (this.piedra && !(esRopa && this.ropa)) {
         objeto.material = this.materialPiedra;
         return;
       }
 
-      if (esRopa && this.ropa) {
+      if (colorRopa) {
         if (material.map) material.map = agrisar(material.map);
-        material.color.set(/^Mat_Pants/.test(material.name) ? this.ropa.pantalon : this.ropa.camisa);
+        material.color.set(colorRopa);
         tela.push(objeto);
         return;
       }

@@ -3,6 +3,7 @@
 // preparada se manda al puesto de la feria con la frase de rescate.
 import * as THREE from "../vendor/three/three.module.js";
 import { Avatar } from "./avatar.js";
+import { crearTemplo } from "./templo.js";
 import { Labios } from "./labios.js";
 import { Comparador } from "../compartido/comparador.js";
 
@@ -28,13 +29,13 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 mundo.appendChild(renderer.domElement);
 
 const escena = new THREE.Scene();
-escena.background = new THREE.Color("#121212");
+const templo = crearTemplo(escena, { ligero: true });
 const camara = new THREE.PerspectiveCamera(30, 1, 0.01, 50);
 escena.add(new THREE.HemisphereLight(0xffffff, 0x332211, 1.1));
 const sol = new THREE.DirectionalLight(0xfff1e0, 2.0);
 sol.position.set(1.5, 3, 3);
 escena.add(sol);
-const contra = new THREE.DirectionalLight(0xff6b35, 1.6);
+const contra = new THREE.DirectionalLight(0x8b5cf6, 1.6);
 contra.position.set(-2, 2, -2);
 escena.add(contra);
 
@@ -64,6 +65,7 @@ let maximo = null;
   requestAnimationFrame(bucle);
   const delta = reloj.getDelta();
   maximo?.actualizar(delta, reloj.elapsedTime);
+  templo.actualizar(reloj.elapsedTime);
   renderer.render(escena, camara);
 })();
 
@@ -153,7 +155,7 @@ botonDespertar.addEventListener("click", async () => {
 });
 
 Promise.all([
-  new Avatar({ escena, id: "maximo", glb: "assets/maximo.glb", cara: "cara", piel: "#B8743F", formas: { Mister_T: 1 } }).cargar(),
+  new Avatar({ escena, id: "maximo", glb: "assets/maximo.glb", cara: "cara", piel: "#B8743F", formas: { Mister_T: 1 }, ropa: { pantalon: "#7C3AED" } }).cargar(),
   cargarRespuestas(),
 ])
   .then(([avatar]) => {
