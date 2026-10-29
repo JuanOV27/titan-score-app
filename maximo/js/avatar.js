@@ -68,12 +68,23 @@ export class Avatar {
     reposo = "idle",
     foco = 0xffb27a,
     esColoso = false,
+    // Clip que se repite en bucle mientras el personaje responde, en vez de los gestos de una sola pasada
+    // (Nubosa: `sentada_habla`, que gesticula sin pararse de su nube).
+    clipHabla = null,
+    // Flotar todo el personaje: { altura, amplitud, periodo } en metros y segundos.
+    levitar = null,
+    // Metros que se adelanta el pelo hacia donde mira el personaje (corrige mechones que atraviesan la frente).
+    adelantarCabello = 0,
   }) {
     this.escena = escena;
     this.id = id;
     this.glb = glb;
     this.carpetaCara = cara;
     this.pos = pos;
+    this.clipHabla = clipHabla;
+    this.levitar = levitar;
+    this.adelantarCabello = adelantarCabello;
+    this.cabelloAjustado = adelantarCabello === 0;
     this.piel = piel;
     this.piedra = piedra;
     this.formas = formas;
@@ -244,6 +255,10 @@ export class Avatar {
     const mapa = texturas.load("assets/efectos/nube_sprite.png");
     mapa.colorSpace = THREE.SRGBColorSpace;
     const nubes = [];
+    // `nubes` puede ser true (figura de pie: giran entre 0,25 y 1,6 m, pegadas al cuerpo) o
+    // { radio: [min, max], altura: [min, max] } en metros, respecto al origen del modelo.
+    const [radioMin, radioMax] = this.nubes?.radio ?? [0.36, 0.56];
+    const [alturaMin, alturaMax] = this.nubes?.altura ?? [0.25, 1.6];
     for (let i = 0; i < 11; i++) {
       const nube = new THREE.Sprite(
         new THREE.SpriteMaterial({
@@ -257,8 +272,8 @@ export class Avatar {
       nube.scale.set(escala * 1.6, escala, 1);
       nube.userData = {
         angulo: (i / 11) * Math.PI * 2,
-        radio: 0.36 + Math.random() * 0.2,
-        altura: 0.25 + Math.random() * 1.35,
+        radio: radioMin + Math.random() * (radioMax - radioMin),
+        altura: alturaMin + Math.random() * (alturaMax - alturaMin),
         velocidad: (0.25 + Math.random() * 0.25) * (i % 2 ? 1 : -1),
         fase: Math.random() * 6,
       };
@@ -316,9 +331,28 @@ export class Avatar {
     this.animacionActual = animacion;
   }
 
+  // Pone un clip en bucle con una transición suave desde el que esté sonando.
+  #tocarBucle(nombre, fundido = 0.4) {
+    const accion = this.acciones[nombre];
+    if (!accion) return;
+    accion.setLoop(THREE.LoopRepeat, Infinity);
+    accion.clampWhenFinished = false;
+    accion.reset().play();
+    if (this.accionActual && this.accionActual !== accion) {
+      this.accionActual.crossFadeTo(accion, fundido, false);
+    }
+    this.accionActual = accion;
+  }
+
   hablar({ gesto = "explicar", animacion = null } = {}) {
-    this.repetirGesto = true;
-    this.#tocarGesto(gesto, animacion);
+    if (this.clipHabla && this.acciones[this.clipHabla]) {
+      this.repetirGesto = false;
+      this.gestoActual = gesto;
+      this.#tocarBucle(this.clipHabla);
+    } else {
+      this.repetirGesto = true;
+      this.#tocarGesto(gesto, animacion);
+    }
     this.cara?.setGesto(gesto);
   }
 
@@ -335,16 +369,7 @@ export class Avatar {
       : this.acciones.idle
         ? "idle"
         : null;
-    if (nombre) {
-      const accion = this.acciones[nombre];
-      accion.setLoop(THREE.LoopRepeat, Infinity);
-      accion.clampWhenFinished = false;
-      accion.reset().play();
-      if (this.accionActual && this.accionActual !== accion) {
-        this.accionActual.crossFadeTo(accion, 0.3, false);
-      }
-      this.accionActual = accion;
-    }
+    if (nombre) this.#tocarBucle(nombre, 0.4);
 
     if (this.reposoClip === "estatua") {
       this.cara?.setOjos("cerrados");
@@ -383,8 +408,27 @@ export class Avatar {
     this.cara?.setFondo(`assets/pieles/${PIELES[nombre].archivo}`);
   }
 
+  // Adelanta las piezas de pelo (hijas del hueso de la cabeza) en la dirección en que mira el personaje,
+  // expresada en el espacio del hueso para que siga a la cabeza cuando gira. Se hace una vez, ya posado.
+  ajustarCabello() {
+    this.cabelloAjustado = true;
+    const adelante = new THREE.Vector3(0, 0, this.adelantarCabello);
+    this.raiz.updateMatrixWorld(true);
+    this.raiz.traverse((nodo) => {
+      if (!nodo.name.startsWith("EXP_Cabello") || !nodo.parent) return;
+      const giro = nodo.parent.getWorldQuaternion(new THREE.Quaternion()).invert();
+      const escala = nodo.parent.getWorldScale(new THREE.Vector3());
+      nodo.position.add(adelante.clone().applyQuaternion(giro).divide(escala));
+    });
+  }
+
   actualizar(delta, tiempo) {
     this.mezclador?.update(delta);
+    if (!this.cabelloAjustado && this.raiz) this.ajustarCabello();
+    if (this.levitar && this.raiz) {
+      const { altura, amplitud, periodo } = this.levitar;
+      this.raiz.position.y = this.pos[1] + altura + Math.sin((tiempo / periodo) * Math.PI * 2) * amplitud;
+    }
     this.nubesActualizar?.(tiempo, delta);
 
     const objetivo = this.destacado ? 0.35 : 0;

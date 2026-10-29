@@ -10,6 +10,13 @@ import { Comparador } from "../compartido/comparador.js";
 const RESCATE = "sis_rescate_2";      // "Eso todavía no lo sé… pregúntale a mi creador aquí en el puesto."
 const SALUDO = "saludo";
 
+// Si nadie escribe ni él está hablando durante este rato, suelta una frase al azar. `?silencio=2000` en la
+// URL lo cambia (solo sirve para probar sin esperar).
+const SILENCIO_MS = Number(new URLSearchParams(location.search).get("silencio")) || 6000;
+// Respuestas que no tienen sentido sueltas: el saludo, la despedida, los guiños y lo que habla de personajes
+// que no salen en esta página.
+const NO_SUELTAS = new Set(["saludo", "despedida", "estatua_easter", "quien_nubosa", "quien_coloso", "eres_ia"]);
+
 const mundo = document.querySelector("#mundo");
 const subtitulo = document.querySelector("#subtitulo");
 const subtituloTexto = document.querySelector("#subtituloTexto");
@@ -72,6 +79,7 @@ let maximo = null;
 // --- respuestas ----------------------------------------------------------------
 
 let comparador = null;
+let frasesSueltas = [];
 const frases = new Map();
 
 async function cargarRespuestas() {
@@ -83,6 +91,7 @@ async function cargarRespuestas() {
   for (const frase of [...datos.respuestas, ...datos.esquivas, ...Object.values(datos.sistema).flat()]) {
     frases.set(frase.id, frase);
   }
+  frasesSueltas = datos.respuestas.filter((r) => !NO_SUELTAS.has(r.id)).map((r) => r.id);
   // Sugerencias: la primera variante de 6 respuestas al azar, escrita como pregunta.
   const opciones = datos.respuestas.filter((r) => r.categoria !== "personaje" || r.id === "historia");
   for (let i = opciones.length - 1; i > 0; i -= 1) {
@@ -101,36 +110,60 @@ async function cargarRespuestas() {
 
 // --- conversación ---------------------------------------------------------------
 
-let hablando = false;
+let hablando = false;       // Máximo está diciendo algo (una respuesta o una frase suelta)
+let espontanea = false;     // y lo que dice no es respuesta a nadie, así que se puede cortar
+let turno = 0;              // cada intervención tiene el suyo; quien la corta lo cambia
 
-function bloquear(si) {
-  hablando = si;
+function bloquearEntrada(si) {
   texto.disabled = si;
   enviar.disabled = si;
   for (const b of sugerencias.querySelectorAll("button")) b.disabled = si;
 }
 
-async function decir(frase) {
+// Corta lo que esté diciendo. Cambiar el turno antes de parar el audio hace que `decir` sepa que no se
+// acabó solo: si no, creería que el audio falló y simularía los labios durante toda la frase.
+function cortar() {
+  turno += 1;
+  labios.detener();
+  hablando = false;
+  espontanea = false;
+}
+
+async function decir(frase, suelta = false) {
+  const mio = ++turno;
+  hablando = true;
+  espontanea = suelta;
+  // Las respuestas bloquean la entrada mientras suenan; las frases sueltas no, para no dejar sin escribir
+  // a quien quiera preguntar en medio de una.
+  bloquearEntrada(!suelta);
   subtitulo.hidden = false;
   subtituloTexto.textContent = frase.texto;
   maximo.hablar({ gesto: frase.gesto ?? "explicar", animacion: frase.animacion ?? null });
-  const sono = await labios.reproducir(`audio/${frase.id}.mp3`, (boca) => maximo.setBoca(boca));
-  if (!sono) await labios.simular(frase.texto, (boca) => maximo.setBoca(boca));
-  maximo.reposo();
+  try {
+    const sono = await labios.reproducir(`audio/${frase.id}.mp3`, (boca) => maximo.setBoca(boca));
+    if (mio === turno && !sono) await labios.simular(frase.texto, (boca) => maximo.setBoca(boca));
+  } finally {
+    if (mio === turno) {            // si la cortaron, quien la cortó ya se ocupa del resto
+      hablando = false;
+      espontanea = false;
+      bloquearEntrada(false);
+      maximo.reposo();
+      reiniciarSilencio();
+    }
+  }
 }
 
 async function preguntar(pregunta) {
   const limpia = String(pregunta).trim().slice(0, 150);
-  if (!limpia || hablando || !maximo) return;
-  bloquear(true);
+  if (!limpia || !maximo) return;
+  if (hablando && !espontanea) return;      // está respondiendo a otra pregunta
+  if (hablando) cortar();                   // soltaba una frase al azar: la corta para atender la pregunta
   texto.value = "";
   try {
     const hallazgo = comparador?.buscar(limpia);
     await decir(frases.get(hallazgo?.id) ?? frases.get(RESCATE));
   } catch (error) {
     console.error("No se pudo responder:", error);
-  } finally {
-    bloquear(false);
   }
 }
 
@@ -139,19 +172,58 @@ formulario.addEventListener("submit", (evento) => {
   void preguntar(texto.value);
 });
 
+// --- frases al azar en los silencios ---------------------------------------------
+
+let despierto = false;
+let temporizadorSilencio = null;
+let bolsa = [];                 // las frases sueltas, barajadas: no se repite ninguna hasta agotarlas todas
+let ultima = null;
+
+function siguienteFraseSuelta() {
+  if (bolsa.length === 0) {
+    bolsa = [...frasesSueltas];
+    for (let i = bolsa.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [bolsa[i], bolsa[j]] = [bolsa[j], bolsa[i]];
+    }
+    // Al rebarajar, que la primera no sea la misma con la que acabó la ronda anterior.
+    if (bolsa.length > 1 && bolsa[0] === ultima) bolsa.push(bolsa.shift());
+  }
+  ultima = bolsa.shift();
+  return frases.get(ultima);
+}
+
+function reiniciarSilencio() {
+  clearTimeout(temporizadorSilencio);
+  if (!despierto) return;
+  temporizadorSilencio = setTimeout(romperSilencio, SILENCIO_MS);
+}
+
+function romperSilencio() {
+  // Si ya habla, alguien tiene algo escrito sin enviar o la pestaña está oculta, vuelve a esperar.
+  if (hablando || document.hidden || texto.value.trim() || frasesSueltas.length === 0) {
+    reiniciarSilencio();
+    return;
+  }
+  void decir(siguienteFraseSuelta(), true).catch((error) => console.error("No se pudo hablar:", error));
+}
+
+// Escribir (o tocar el campo) cuenta como actividad: el silencio vuelve a empezar de cero.
+texto.addEventListener("input", reiniciarSilencio);
+texto.addEventListener("focus", reiniciarSilencio);
+document.addEventListener("visibilitychange", reiniciarSilencio);
+
 // --- arranque ------------------------------------------------------------------
 
 botonDespertar.addEventListener("click", async () => {
   // Hace falta un toque del usuario para que el navegador deje sonar el audio.
   await labios.desbloquear().catch(() => false);
   despertar.hidden = true;
-  bloquear(false);
+  despierto = true;
+  bloquearEntrada(false);
   texto.focus({ preventScroll: true });
-  if (frases.has(SALUDO)) {
-    bloquear(true);
-    await decir(frases.get(SALUDO)).catch(() => {});
-    bloquear(false);
-  }
+  if (frases.has(SALUDO)) await decir(frases.get(SALUDO)).catch(() => {});
+  reiniciarSilencio();
 });
 
 Promise.all([
